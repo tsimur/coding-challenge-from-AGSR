@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agsr-nginx-deployment
+  namespace: {{ .Values.namespace.name }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: agsr-nginx-app
+  template:
+    metadata:
+      labels:
+        app: agsr-nginx-app
+    spec:
+      containers:
+        - name: agsr-nginx-container
+          image: nginx:{{ .Values.image.tag}}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+          startupProbe:
+            httpGet:
+              path: /message
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10 
+
+      volumes:  # Add volumes section
+        - name: nginx-config-volume
+          configMap:
+            name: nginx-config  # Name of the ConfigMap

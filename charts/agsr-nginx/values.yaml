@@ -1,0 +1,9 @@
+namespace:
+  name: agsr-nginx
+
+image:
+  tag: "1.25.3"
+
+configmap:
+  nginx_conf:
+    message: "Hi AGSR folks!"

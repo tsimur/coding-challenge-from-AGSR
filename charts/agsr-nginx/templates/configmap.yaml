@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: {{ .Values.namespace.name }}
+data:
+  nginx.conf: |
+    events {
+    worker_connections 1024;
+    }
+
+    http {
+        server {
+            listen 80;
+            server_name localhost;
+
+            location /message {
+                return 200 {{ .Values.configmap.nginx_conf.message | quote }};
+            }
+
+            location /health {
+                return 200;
+            }
+        }
+    }
